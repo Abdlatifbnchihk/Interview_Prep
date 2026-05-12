@@ -12,10 +12,17 @@ use Illuminate\Notifications\Notifiable;
 
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+
+    public function domains(): HasMany
+    {
+        return $this->hasMany(Domain::class);
+    }
 
     /**
      * Get the attributes that should be cast.
