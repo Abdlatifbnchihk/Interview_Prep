@@ -42,10 +42,10 @@
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">{{ __('Generation History') }}</h3>
-                @if ($concept->generations->isEmpty())
+                {{-- @if ($concept->generations->isEmpty())
                     <p class="text-gray-500">{{ __('No generations for this concept yet.') }}</p>
-                @else
-                    @foreach ($concept->generations as $generation)
+                @else --}}
+                    {{-- @foreach ($concept->generations as $generation)
                         <div class="border-t border-gray-200 pt-4 mt-4 first:border-t-0 first:pt-0 first:mt-0">
                             <div class="text-sm text-gray-500 mb-2">
                                 {{ __('Generated') }}: {{ $generation->created_at->format('Y-m-d H:i') }}
@@ -58,8 +58,8 @@
                                 </ul>
                             @endif
                         </div>
-                    @endforeach
-                @endif
+                    @endforeach --}}
+                {{-- @endif --}}
             </div>
         </div>
     </div>

@@ -7,7 +7,7 @@ use App\Enums\ConceptStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+// use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Concept extends Model
 {
@@ -21,11 +21,6 @@ class Concept extends Model
     public function domain(): BelongsTo
     {
         return $this->belongsTo(Domain::class);
-    }
-
-    public function generations(): HasMany
-    {
-        return $this->hasMany(QuestionGeneration::class);
     }
 
     public function scopeByStatus(Builder $query, string $status): Builder
