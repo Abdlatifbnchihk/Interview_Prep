@@ -10,6 +10,7 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\ConceptController;
 use App\Http\Controllers\DomainController;
 use App\Http\Controllers\ProfileController;
 
@@ -41,4 +42,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('dashboard', fn() => view('dashboard'))->name('dashboard');
     Route::resource('domains', DomainController::class);
+    Route::resource('concepts', ConceptController::class);
+    Route::patch('concepts/{concept}/status', [ConceptController::class, 'updateStatus'])->name('concepts.updateStatus');
 });
