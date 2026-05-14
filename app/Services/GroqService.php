@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Concept;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class GroqService
 {
@@ -21,6 +22,12 @@ class GroqService
     {
         $prompt = $this->buildPrompt($concept);
 
+        Log::info('Groq Request', [
+            'url' => $this->apiUrl,
+            'model' => $this->model,
+            'prompt_length' => strlen($prompt),
+        ]);
+
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->apiKey,
             'Content-Type'  => 'application/json',
@@ -33,7 +40,13 @@ class GroqService
             'temperature' => 0.7,
         ]);
 
+        Log::info('Groq Response Status', ['status' => $response->status()]);
+
         if ($response->failed()) {
+            Log::error('Groq API Error', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
             throw new \Exception('Groq API request failed: ' . $response->status());
         }
 
