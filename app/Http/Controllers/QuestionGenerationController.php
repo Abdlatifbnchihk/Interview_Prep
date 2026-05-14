@@ -6,6 +6,7 @@ use App\Models\Concept;
 use App\Models\QuestionGeneration;
 use App\Services\GroqService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class QuestionGenerationController extends Controller
@@ -22,6 +23,7 @@ class QuestionGenerationController extends Controller
     public function store(Concept $concept): RedirectResponse
     {
         $this->authorize('view', $concept);
+        $concept->load('domain');
 
         try {
             $questions = $this->groqService->generate($concept);
@@ -36,9 +38,10 @@ class QuestionGenerationController extends Controller
                 ->with('success', 'Questions generated successfully!');
 
         } catch (\Exception $e) {
+            Log::error('Groq API Error: ' . $e->getMessage());
             return redirect()
                 ->back()
-                ->with('error', 'AI generation failed. Please try again later.');
+                ->with('error', 'AI generation failed: ' . $e->getMessage());
         }
     }
 
