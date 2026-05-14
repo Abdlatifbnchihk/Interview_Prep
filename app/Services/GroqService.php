@@ -10,7 +10,7 @@ class GroqService
 {
     private string $apiKey;
     private string $apiUrl;
-    private string $model = 'llama3-8b-8192';
+    private string $model = 'llama-3.1-8b-instant';
 
     public function __construct()
     {
