@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Concept extends Model
 {
+
     protected $fillable = ['domain_id', 'title', 'explanation', 'difficulty', 'status'];
 
     protected $casts = [
