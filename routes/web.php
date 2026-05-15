@@ -13,6 +13,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\ConceptController;
 use App\Http\Controllers\DomainController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\QuestionGenerationController;
 
 Route::get('/', fn() => view('welcome'))->name('home');
 
@@ -40,8 +41,11 @@ Route::middleware('auth')->group(function () {
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('dashboard', fn() => view('dashboard'))->name('dashboard');
+
     Route::resource('domains', DomainController::class);
     Route::resource('concepts', ConceptController::class);
     Route::patch('concepts/{concept}/status', [ConceptController::class, 'updateStatus'])->name('concepts.updateStatus');
+    Route::post('concepts/{concept}/generations', [QuestionGenerationController::class, 'store'])->name('generations.store');
+    Route::get('concepts/{concept}/generations', [QuestionGenerationController::class, 'index'])->name('generations.index');
+    Route::delete('generations/{generation}', [QuestionGenerationController::class, 'destroy'])->name('generations.destroy');
 });
