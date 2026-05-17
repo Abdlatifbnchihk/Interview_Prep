@@ -42,7 +42,14 @@ Route::middleware('auth')->group(function () {
     Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::get('domains/trash', [DomainController::class, 'trash'])->name('domains.trash');
+    Route::patch('domains/{id}/restore', [DomainController::class, 'restore'])->name('domains.restore');
+    Route::delete('domains/{id}/force-delete', [DomainController::class, 'forceDelete'])->name('domains.forceDelete');
     Route::resource('domains', DomainController::class);
+
+    Route::get('concepts/trash', [ConceptController::class, 'trash'])->name('concepts.trash');
+    Route::patch('concepts/{id}/restore', [ConceptController::class, 'restore'])->name('concepts.restore');
+    Route::delete('concepts/{id}/force-delete', [ConceptController::class, 'forceDelete'])->name('concepts.forceDelete');
     Route::resource('concepts', ConceptController::class);
     Route::patch('concepts/{concept}/status', [ConceptController::class, 'updateStatus'])->name('concepts.updateStatus');
     Route::post('concepts/{concept}/generations', [QuestionGenerationController::class, 'store'])->name('generations.store');

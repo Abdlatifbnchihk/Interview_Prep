@@ -31,4 +31,14 @@ class ConceptPolicy
     {
         return $user->id === $concept->domain->user_id;
     }
+
+    public function restore(User $user, Concept $concept): bool
+    {
+        return $user->id === $concept->domain->user_id;
+    }
+
+    public function forceDelete(User $user, Concept $concept): bool
+    {
+        return $user->id === $concept->domain->user_id;
+    }
 }

@@ -6,11 +6,13 @@ use App\Enums\ConceptDifficulty;
 use App\Enums\ConceptStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Concept extends Model
 {
+    use SoftDeletes;
 
     protected $fillable = ['domain_id', 'title', 'explanation', 'difficulty', 'status'];
 

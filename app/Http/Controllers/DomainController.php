@@ -13,7 +13,8 @@ class DomainController extends Controller
     public function index(): View
     {
         $domains = auth()->user()->domains()->withCount('concepts')->get();
-        return view('domains.index', compact('domains'));
+        $trashCount = auth()->user()->domains()->onlyTrashed()->count();
+        return view('domains.index', compact('domains', 'trashCount'));
     }
 
     public function create(): View
@@ -52,6 +53,28 @@ class DomainController extends Controller
     {
         $this->authorize('delete', $domain);
         $domain->delete();
-        return redirect()->route('domains.index')->with('success', 'Domain deleted.');
+        return redirect()->route('domains.index')->with('success', 'Domain moved to trash.');
+    }
+
+    public function trash(): View
+    {
+        $domains = auth()->user()->domains()->onlyTrashed()->latest('deleted_at')->get();
+        return view('domains.trash', compact('domains'));
+    }
+
+    public function restore(int $id): RedirectResponse
+    {
+        $domain = Domain::onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $domain);
+        $domain->restore();
+        return redirect()->route('domains.index')->with('success', 'Domain restored.');
+    }
+
+    public function forceDelete(int $id): RedirectResponse
+    {
+        $domain = Domain::onlyTrashed()->findOrFail($id);
+        $this->authorize('forceDelete', $domain);
+        $domain->forceDelete();
+        return redirect()->route('domains.trash')->with('success', 'Domain permanently deleted.');
     }
 }
