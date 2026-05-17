@@ -5,11 +5,10 @@ namespace App\Http\Controllers;
 use App\Enums\ConceptStatus;
 use App\Http\Requests\StoreConceptRequest;
 use App\Http\Requests\UpdateConceptRequest;
+use App\Http\Requests\UpdateConceptStatusRequest;
 use App\Models\Concept;
-use App\Models\Domain;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class ConceptController extends Controller
@@ -28,8 +27,9 @@ class ConceptController extends Controller
             ->paginate(15);
 
         $domains = auth()->user()->domains()->get();
+        $trashCount = \App\Models\Concept::onlyTrashed()->count();
 
-        return view('concepts.index', compact('concepts', 'domains'));
+        return view('concepts.index', compact('concepts', 'domains', 'trashCount'));
     }
 
     public function create(): View
@@ -45,11 +45,6 @@ class ConceptController extends Controller
     {
         $this->authorize('create', Concept::class);
 
-        $domain = Domain::find($request->domain_id);
-        if ($domain->user_id !== auth()->id()) {
-            return redirect()->back()->with('error', 'Invalid domain selected.');
-        }
-
         Concept::create($request->validated());
 
         return redirect()->route('concepts.show', Concept::latest()->first())
@@ -59,8 +54,6 @@ class ConceptController extends Controller
     public function show(Concept $concept): View
     {
         $this->authorize('view', $concept);
-
-        // $concept->load('domain', 'generations.questions');
 
         return view('concepts.show', compact('concept'));
     }
@@ -91,19 +84,47 @@ class ConceptController extends Controller
         $concept->delete();
 
         return redirect()->route('concepts.index')
-            ->with('success', 'Concept deleted.');
+            ->with('success', 'Concept moved to trash.');
     }
 
-    public function updateStatus(Request $request, Concept $concept): RedirectResponse
+    public function updateStatus(UpdateConceptStatusRequest $request, Concept $concept): RedirectResponse
     {
         $this->authorize('update', $concept);
-
-        $request->validate([
-            'status' => ['required', Rule::enum(ConceptStatus::class)],
-        ]);
 
         $concept->update(['status' => $request->status]);
 
         return redirect()->back()->with('success', 'Status updated.');
+    }
+
+    public function trash(): View
+    {
+        $this->authorize('viewAny', Concept::class);
+
+        $concepts = Concept::onlyTrashed()
+            ->with('domain')
+            ->latest('deleted_at')
+            ->paginate(20);
+
+        return view('concepts.trash', compact('concepts'));
+    }
+
+    public function restore(int $id): RedirectResponse
+    {
+        $concept = Concept::onlyTrashed()->findOrFail($id);
+        $this->authorize('restore', $concept);
+        $concept->restore();
+
+        return redirect()->route('concepts.index')
+            ->with('success', 'Concept restored.');
+    }
+
+    public function forceDelete(int $id): RedirectResponse
+    {
+        $concept = Concept::onlyTrashed()->findOrFail($id);
+        $this->authorize('forceDelete', $concept);
+        $concept->forceDelete();
+
+        return redirect()->route('concepts.trash')
+            ->with('success', 'Concept permanently deleted.');
     }
 }

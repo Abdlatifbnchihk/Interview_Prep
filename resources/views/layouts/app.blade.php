@@ -15,16 +15,10 @@
             @include('layouts.navigation')
         @endauth
 
-        @isset($header)
-            <header class="bg-slate-900/80 backdrop-blur-md border-b border-white/5 px-4 sm:px-6 lg:px-8 py-4">
-                <div class="max-w-7xl mx-auto">
-                    {{ $header }}
-                </div>
-            </header>
-        @endisset
-
-        <main class="flex-1 bg-slate-900">
-            {{ $slot }}
+        <main class="flex-1">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {{ $slot }}
+            </div>
         </main>
     </div>
 </body>

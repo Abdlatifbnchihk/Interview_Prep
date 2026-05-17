@@ -17,7 +17,15 @@ class StoreConceptRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'domain_id'   => ['required', 'exists:domains,id'],
+            'domain_id'   => [
+                'required',
+                'exists:domains,id',
+                function ($attribute, $value, $fail) {
+                    if (!auth()->user()->domains()->where('id', $value)->exists()) {
+                        $fail('The selected domain is invalid.');
+                    }
+                },
+            ],
             'title'       => ['required', 'string', 'max:255'],
             'explanation' => ['required', 'string'],
             'difficulty'  => ['required', Rule::enum(ConceptDifficulty::class)],

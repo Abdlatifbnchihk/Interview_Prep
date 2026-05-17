@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use App\Enums\ConceptStatus;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Domain extends Model
 {
+    use SoftDeletes;
     protected $fillable = ['name', 'color', 'user_id'];
 
     public function user(): BelongsTo
@@ -34,5 +37,10 @@ class Domain extends Model
     public function toReviewCount(): int
     {
         return $this->concepts()->where('status', ConceptStatus::ToReview)->count();
+    }
+
+    public function scopeByUser(Builder $query, int $userId): Builder
+    {
+        return $query->where('user_id', $userId);
     }
 }
